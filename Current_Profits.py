@@ -4,7 +4,7 @@ from datetime import datetime
 
 def main():
     now = datetime.now()
-    formatted_date = now.strftime('%H:%M %d-%m-%Y')
+    formatted_date = now.strftime(f'%H:%M\t%d-%m-%Y')
     investments = {
         'sp500': {
             'bought_value': -INSERT VALUE HERE-,
@@ -47,9 +47,24 @@ def main():
 
     for investment in investments:
         profits.append((float(values[investment]) - float(investments[investment]['bought_value'])) * int(investments[investment]['stocks_bought']) )
-    file = open('Stocks_file', 'a')
-    print(f"The profits are: {sum(profits)}")
-    file.write(f"\n{formatted_date}\t {sum(profits)}")
-    file.close()
+    readable_file = open('Stocks_file', 'r').read()
+
+    if datetime.now().strftime('%d-%m-%Y') in readable_file:
+        lines = readable_file.split('\n')
+        del lines[-1]
+        with open('Stocks_file', 'w') as file:
+            print("ATTENTION! YOU ALREADY A SCAN TODAY!")
+            print(f"The profits are: {sum(profits)}")
+            final_text = ''
+            for line in lines[:len(lines) - 1]:
+                final_text += line + '\n'
+            final_text += f'{formatted_date}\t {sum(profits)}\n'
+            file.write(final_text)
+            file.close()
+    else:
+        file = open('Stocks_file', 'a')
+        print(f"The profits are: {sum(profits)}")
+        file.write(f"{formatted_date}\t {sum(profits)}\n")
+        file.close()
 
 main()
