@@ -1,6 +1,6 @@
 # yahoofinancescrape
 Very simple and inefficient yahoo finance scraper of selected stocks. Calculates the profits from bought value, prints to screen and then prints to file for later use in a graph.
-To make it work, you first need to input;
+To make it work, you first need to;
   - Go to Yahoo Finances in your browser
   - Refuse the cookies
   - Press F12 then go to the storage tab and then to cookies
