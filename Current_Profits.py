@@ -1,32 +1,36 @@
 import requests
 from bs4 import BeautifulSoup as bs
 from datetime import datetime
+import time
+
+class Investment:
+    def __init__(self, name, bought_value, stocks_bought, link):
+        self.name = name
+        self.bought_value = bought_value
+        self.stocks_bought = stocks_bought
+        self.link = link
+
+    def add_stocks(self, number_stocks, price):
+        self.bought_value = (self.bought_value * self.stocks_bought + price * number_stocks) / (
+            number_stocks + self.stocks_bought
+        )
+        self.stocks_bought += number_stocks
+
+    def remove_stocks(self, number_stocks):
+        self.stocks_bought -= number_stocks
+
+sp500 = Investment('sp500', 400, 1, 'https://finance.yahoo.com/quote/IVVB11.SA/)
+world = Investment('world', 200, 20, 'https://finance.yahoo.com/quote/VWCE.DE/')
+investments = [sp500, world]
 
 def main():
     now = datetime.now()
     formatted_date = now.strftime(f'%H:%M\t%d-%m-%Y')
-    investments = {
-        'sp500': {
-            'bought_value': -INSERT VALUE HERE-,
-            'stocks_bought': -INSERT NUMBER HERE-,
-            'link':'https://finance.yahoo.com/quote/SXR8.DE/',
-        },
-        'world': {
-            'bought_value': -INSERT VALUE HERE-,
-            'stocks_bought': -INSERT NUMBER HERE-,
-            'link': 'https://finance.yahoo.com/quote/IWDA.AS/',
-        },
-    }
-
     cookie = {
-        'A1S': 'IMPORT COOKIE',
-        'A1': 'IMPORT COOKIE',
-        'A3': 'IMPORT COOKIE',
-        'cmp': 'IMPORT COOKIE',
-        'EuConsent': 'IMPORT COOKIE',
-        'GUCS': 'IMPORT COOKIE',
-        'GUC': 'IMPORT COOKIE',
-        'PRF': 'IMPORT COOKIE',
+        '-INSERT-': '-INSERT COOKIE HERE-',
+        '-INSERT-': '-INSERT COOKIE HERE-',
+        '-INSERT-': '-INSERT COOKIE HERE-',
+        '-INSERT-': '-INSERT COOKIE HERE-',
     }
 
     header = {
@@ -39,28 +43,27 @@ def main():
     values = {}
 
     for investment in investments:
-         temp_html = requests.get(investments[investment]['link'], headers = header, cookies = cookie).text
+         temp_html = requests.get(investment.link, headers = header, cookies = cookie).text
          temp_soup = bs(temp_html, 'html.parser')
-         values[investment] = temp_soup.find('span', class_ = 'yf-ipw1h0 base').text
-
+         values[investment] = temp_soup.find('div', class_ = 'YMlKec fxKbKc').text
+         values[investment] = values[investment].removeprefix('€')
     profits = []
 
     for investment in investments:
-        profits.append((float(values[investment]) - float(investments[investment]['bought_value'])) * int(investments[investment]['stocks_bought']) )
+        profits.append((float(values[investment]) - investment.bought_value) * investment.stocks_bought)
     readable_file = open('Stocks_file', 'r').read()
 
     if datetime.now().strftime('%d-%m-%Y') in readable_file:
         lines = readable_file.split('\n')
         del lines[-1]
         with open('Stocks_file', 'w') as file:
-            print("ATTENTION! YOU ALREADY A SCAN TODAY!")
+            print("ATTENTION! YOU ALREADY SCANNED TODAY!")
             print(f"The profits are: {sum(profits)}")
             final_text = ''
             for line in lines[:len(lines) - 1]:
                 final_text += line + '\n'
             final_text += f'{formatted_date}\t {sum(profits)}\n'
             file.write(final_text)
-            file.close()
     else:
         file = open('Stocks_file', 'a')
         print(f"The profits are: {sum(profits)}")
@@ -68,3 +71,4 @@ def main():
         file.close()
 
 main()
+time.sleep(1.3)
