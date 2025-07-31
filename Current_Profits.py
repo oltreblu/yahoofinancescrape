@@ -45,7 +45,7 @@ def main():
     for investment in investments:
          temp_html = requests.get(investment.link, headers = header, cookies = cookie).text
          temp_soup = bs(temp_html, 'html.parser')
-         values[investment] = temp_soup.find('div', class_ = 'YMlKec fxKbKc').text
+         values[investment] = temp_soup.find('span', class_ = 'yf-ipw1h0 base').text
          values[investment] = values[investment].removeprefix('€')
     profits = []
 
